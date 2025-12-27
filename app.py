@@ -80,10 +80,9 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lon = loc['coords']['longitude']
         coords_txt = f"{lat}, {lon}"
         
-        # >>>>> ENLACE "BLINDADO" UNIVERSAL <<<<<
-        # "https://www.google.com/maps/search/?api=1&query="
-        # Este formato obliga al sistema operativo a buscar la App de Mapas.
-        # No falla nunca.
+        # >>>>> AQUÍ ESTÁ EL CAMBIO "MÁGICO" <<<<<
+        # Usamos https://www.google.com/maps/search/?api=1&query=
+        # Este formato funciona en PC y OBLIGA al celular a buscar la coordenada.
         mapa_link = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
         
         ubicacion_detectada = True

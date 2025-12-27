@@ -3,7 +3,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from streamlit_js_eval import get_geolocation
 from datetime import datetime
-import urllib.parse # <--- ESTO ES LO NUEVO PARA QUE WHATSAPP NO FALLE
+import urllib.parse 
 
 # ---------------------------------------------------------
 # 1. CONFIGURACIÓN DE PÁGINA
@@ -219,11 +219,11 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
                         # --- GENERACIÓN DE LINK DE WHATSAPP MEJORADA ---
                         mensaje_wa = f"👋 Hola, soy *{nombre}*.\nNecesito un *{tipo_servicio}* en El Coca.\n📍 *GPS:* {mapa_link}\n🏠 *Ref:* {referencia}"
                         
-                        # Codificamos el mensaje para que funcione bien en internet (convierte espacios en %20, etc.)
+                        # Codificamos el mensaje para que funcione bien en internet
                         mensaje_codificado = urllib.parse.quote(mensaje_wa)
                         
-                        # Usamos tu número detectado: 593960643638
-                        link_wa = f"https://wa.me/593960643638?text={mensaje_codificado}" 
+                        # >>> NÚMERO ACTUALIZADO <<<
+                        link_wa = f"https://wa.me/593962384356?text={mensaje_codificado}" 
                         
                         st.markdown(f'<a href="{link_wa}" class="wa-btn" target="_blank">📲 CONFIRMAR POR WHATSAPP</a>', unsafe_allow_html=True)
                     except Exception as e:
@@ -264,4 +264,6 @@ elif menu == "🚕 CONDUCTOR (ACTIVAR PAGO)":
         """)
         
         msg_pago = f"Hola Admin, adjunto pago de $1 para activar el numero {conductor_id} en Taxi Seguro Coca."
-        st.markdown(f'<a href="https://wa.me/593960643638?text={msg_pago}" class="wa-btn" target="_blank">✅ ENVIAR COMPROBANTE</a>', unsafe_allow_html=True)
+        
+        # >>> NÚMERO ACTUALIZADO AQUÍ TAMBIÉN <<<
+        st.markdown(f'<a href="https://wa.me/593962384356?text={msg_pago}" class="wa-btn" target="_blank">✅ ENVIAR COMPROBANTE</a>', unsafe_allow_html=True)

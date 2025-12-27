@@ -80,8 +80,9 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lon = loc['coords']['longitude']
         coords_txt = f"{lat}, {lon}"
         
-        # >>>>> ENLACE OFICIAL DE LA API DE GOOGLE (A PRUEBA DE FALLOS) <<<<<
-        # Este enlace NO da error 404 porque es la ruta oficial de búsqueda.
+        # >>>>> CORRECCIÓN DEFINITIVA <<<<<
+        # Eliminé "googleusercontent". Usamos la API Oficial de Búsqueda.
+        # "search/?api=1" es el comando universal para abrir apps.
         mapa_link = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
         
         ubicacion_detectada = True

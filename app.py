@@ -80,10 +80,8 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lon = loc['coords']['longitude']
         coords_txt = f"{lat}, {lon}"
         
-        # >>>>> AQUI ESTÁ LA CORRECCIÓN <<<<<
-        # Usamos la API OFICIAL DE BÚSQUEDA DE GOOGLE.
-        # "https://www.google.com/maps/search/?api=1&query="
-        # Este es el único formato que garantiza abrir la APP en Android/iOS.
+        # >>>>> ENLACE CORREGIDO Y UNIVERSAL <<<<<
+        # Usamos la API "Search" oficial. Funciona en iPhone, Android y PC.
         mapa_link = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
         
         ubicacion_detectada = True

@@ -125,7 +125,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# 3. CONEXIÓN A GOOGLE SHEETS (CORREGIDA)
+# 3. CONEXIÓN A GOOGLE SHEETS (CORREGIDA Y BLINDADA)
 # ---------------------------------------------------------
 def conectar_google_sheets():
     try:
@@ -136,16 +136,16 @@ def conectar_google_sheets():
             creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
             client = gspread.authorize(creds)
             
-            # --- CORRECCIÓN IMPORTANTE ---
-            # Antes buscaba ".sheet1" (que falla si está en español como "Hoja 1")
-            # Ahora usa .get_worksheet(0) para agarrar SIEMPRE la primera pestaña
+            # --- CORRECCIÓN VITAL ---
+            # Usamos .get_worksheet(0) para tomar la primera pestaña SIEMPRE
+            # (Funciona aunque se llame "Hoja 1", "Sheet1" o "Datos")
             return client.open("Base_Datos_Coca").get_worksheet(0) 
         else:
-            st.error("⚠️ Falta configurar los Secrets en Streamlit.")
+            st.error("⚠️ Faltan los Secrets en Streamlit.")
             return None
             
     except Exception as e:
-        # Esto te mostrará el error real en pantalla si algo falla
+        # Esto imprimirá el error REAL en pantalla para que sepamos qué pasa
         st.error(f"⚠️ ERROR DE CONEXIÓN: {e}") 
         return None
 
@@ -202,7 +202,7 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
             elif not nombre:
                 st.warning("⚠️ Escribe tu nombre para que el conductor sepa a quién buscar.")
             else:
-                # Guardar en Base de Datos
+                # Intentamos guardar en Base de Datos
                 hoja = conectar_google_sheets()
                 if hoja:
                     try:
@@ -217,9 +217,9 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
                         
                         st.markdown(f'<a href="{link_wa}" class="wa-btn" target="_blank">📲 CONFIRMAR POR WHATSAPP</a>', unsafe_allow_html=True)
                     except Exception as e:
-                        st.error(f"Error al guardar datos: {e}")
+                        st.error(f"⚠️ Error al escribir en la hoja: {e}")
                 else:
-                    # Si falla la conexión, el error ya se mostró arriba en la función conectar
+                    # El error de conexión ya se mostró arriba, no hacemos nada más
                     pass
 
 # ==========================================
@@ -230,9 +230,6 @@ elif menu == "🚕 CONDUCTOR (ACTIVAR PAGO)":
     st.write("Ingresa tu número para verificar tu estado:")
     
     conductor_id = st.text_input("Celular (+593):", placeholder="099...")
-    
-    # AQUÍ IRÍA LA LÓGICA DE VERIFICACIÓN AUTOMÁTICA
-    # Por ahora, si escribe algo, asumimos que NO ha pagado para mostrarle las opciones
     
     if conductor_id:
         st.markdown("""

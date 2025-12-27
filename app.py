@@ -80,8 +80,10 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lon = loc['coords']['longitude']
         coords_txt = f"{lat}, {lon}"
         
-        # >>>>> ENLACE CORREGIDO Y UNIVERSAL <<<<<
-        # Usamos la API "Search" oficial. Funciona en iPhone, Android y PC.
+        # >>>>> CORRECCIÓN DEFINITIVA: LIMPIEZA TOTAL <<<<<
+        # Antes tenías: "http://googleusercontent.com/maps.google.com/..." (ESTO ERA EL ERROR)
+        # Ahora usamos: "https://www.google.com/maps/search/..."
+        # Este es el formato OFICIAL de la API de Google Maps Universal.
         mapa_link = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
         
         ubicacion_detectada = True

@@ -80,9 +80,8 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lon = loc['coords']['longitude']
         coords_txt = f"{lat}, {lon}"
         
-        # >>>>> CORRECCIÓN DEFINITIVA <<<<<
-        # Eliminé "googleusercontent". Usamos la API Oficial de Búsqueda.
-        # "search/?api=1" es el comando universal para abrir apps.
+        # >>>>> CORRECCIÓN DEFINITIVA: ENLACE PURO <<<<<
+        # Eliminamos cualquier prefijo raro. Usamos la API oficial pura.
         mapa_link = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
         
         ubicacion_detectada = True

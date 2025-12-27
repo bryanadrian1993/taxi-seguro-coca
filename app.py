@@ -125,21 +125,28 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# 3. CONEXIÓN A GOOGLE SHEETS
+# 3. CONEXIÓN A GOOGLE SHEETS (CORREGIDA)
 # ---------------------------------------------------------
 def conectar_google_sheets():
     try:
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-        # Intenta leer desde los Secretos de Streamlit Cloud
+        
         if "gcp_service_account" in st.secrets:
             creds_dict = st.secrets["gcp_service_account"]
             creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
             client = gspread.authorize(creds)
-            # IMPORTANTE: La hoja debe llamarse EXACTAMENTE así en tu Drive
-            return client.open("Base_Datos_Coca").sheet1 
+            
+            # --- CORRECCIÓN IMPORTANTE ---
+            # Antes buscaba ".sheet1" (que falla si está en español como "Hoja 1")
+            # Ahora usa .get_worksheet(0) para agarrar SIEMPRE la primera pestaña
+            return client.open("Base_Datos_Coca").get_worksheet(0) 
         else:
+            st.error("⚠️ Falta configurar los Secrets en Streamlit.")
             return None
+            
     except Exception as e:
+        # Esto te mostrará el error real en pantalla si algo falla
+        st.error(f"⚠️ ERROR DE CONEXIÓN: {e}") 
         return None
 
 # ---------------------------------------------------------
@@ -209,10 +216,11 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
                         link_wa = f"https://wa.me/593962362257?text={mensaje_wa}" # CAMBIA ESTE NÚMERO POR EL TUYO
                         
                         st.markdown(f'<a href="{link_wa}" class="wa-btn" target="_blank">📲 CONFIRMAR POR WHATSAPP</a>', unsafe_allow_html=True)
-                    except:
-                        st.error("Error al conectar con la base de datos. Intenta de nuevo.")
+                    except Exception as e:
+                        st.error(f"Error al guardar datos: {e}")
                 else:
-                    st.error("Error de configuración interna (Secrets). Contacta al soporte.")
+                    # Si falla la conexión, el error ya se mostró arriba en la función conectar
+                    pass
 
 # ==========================================
 # MÓDULO B: CONDUCTOR

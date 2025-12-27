@@ -185,8 +185,8 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lon = loc['coords']['longitude']
         ubicacion_txt = f"{lat}, {lon}"
         
-        # --- ENLACE DE MAPA CORREGIDO ---
-        # Usamos el dominio oficial limpio, sin números raros ni redirects.
+        # --- ENLACE ARREGLADO: ESTA ES LA URL OFICIAL UNIVERSAL ---
+        # "https://www.google.com/maps?q=" es el estándar que nunca falla.
         mapa_link = f"https://www.google.com/maps?q={lat},{lon}"
         
         st.markdown(f'<div class="caja-exito">✅ Ubicación detectada en El Coca</div>', unsafe_allow_html=True)
@@ -251,3 +251,22 @@ elif menu == "🚕 CONDUCTOR (ACTIVAR PAGO)":
             <br>Cancela <b>$1.00 USD</b> para recibir carreras hoy.
         </div>
         """, unsafe_allow_html=True)
+        
+        # Enlace de Cobro PayPhone (CÁMBIALO POR EL TUYO REAL)
+        link_pago_payphone = "https://pay.payphonetodoesposible.com/" 
+        
+        st.write("👇 **OPCIÓN 1: ACTIVACIÓN AUTOMÁTICA (Recomendado)**")
+        st.markdown(f'<a href="{link_pago_payphone}" class="payphone-btn" target="_blank">💳 PAGAR $1.00 CON PAYPHONE</a>', unsafe_allow_html=True)
+
+        st.write("👇 **OPCIÓN 2: MANUAL (Deuna / Banco)**")
+        st.info("""
+        🏦 **Banco Pichincha / Deuna**
+        \nCuenta Ahorros: **220XXXXXXX**
+        \nCI: **17XXXXXXX**
+        \nNombre: **Tu Nombre**
+        """)
+        
+        msg_pago = f"Hola Admin, adjunto pago de $1 para activar el numero {conductor_id} en Taxi Seguro Coca."
+        
+        # >>> TU NÚMERO AQUÍ TAMBIÉN <<<
+        st.markdown(f'<a href="https://wa.me/593962384356?text={msg_pago}" class="wa-btn" target="_blank">✅ ENVIAR COMPROBANTE</a>', unsafe_allow_html=True)

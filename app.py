@@ -3,6 +3,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from streamlit_js_eval import get_geolocation
 from datetime import datetime
+import urllib.parse # <--- ESTO ES LO NUEVO PARA QUE WHATSAPP NO FALLE
 
 # ---------------------------------------------------------
 # 1. CONFIGURACIÓN DE PÁGINA
@@ -125,7 +126,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# 3. CONEXIÓN A GOOGLE SHEETS (CON AUTOREPARACIÓN DE LLAVE)
+# 3. CONEXIÓN A GOOGLE SHEETS (CON AUTOREPARACIÓN)
 # ---------------------------------------------------------
 def conectar_google_sheets():
     try:
@@ -136,7 +137,6 @@ def conectar_google_sheets():
             creds_dict = dict(st.secrets["gcp_service_account"])
             
             # --- CORRECCIÓN AUTOMÁTICA DEL ERROR JWT ---
-            # Esto convierte los saltos de linea mal copiados (\\n) en reales (\n)
             if "private_key" in creds_dict:
                 creds_dict["private_key"] = creds_dict["private_key"].replace("\\n", "\n")
             
@@ -216,15 +216,19 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
                         hoja.append_row([fecha, nombre, celular, tipo_servicio, referencia, ubicacion_txt, mapa_link, "PENDIENTE"])
                         st.success("✅ ¡Solicitud registrada con éxito!")
                         
-                        # Generar Link de WhatsApp para avisar al grupo/admin
+                        # --- GENERACIÓN DE LINK DE WHATSAPP MEJORADA ---
                         mensaje_wa = f"👋 Hola, soy *{nombre}*.\nNecesito un *{tipo_servicio}* en El Coca.\n📍 *GPS:* {mapa_link}\n🏠 *Ref:* {referencia}"
-                        link_wa = f"https://wa.me/593962362257?text={mensaje_wa}" # CAMBIA ESTE NÚMERO POR EL TUYO
+                        
+                        # Codificamos el mensaje para que funcione bien en internet (convierte espacios en %20, etc.)
+                        mensaje_codificado = urllib.parse.quote(mensaje_wa)
+                        
+                        # Usamos tu número detectado: 593960643638
+                        link_wa = f"https://wa.me/593960643638?text={mensaje_codificado}" 
                         
                         st.markdown(f'<a href="{link_wa}" class="wa-btn" target="_blank">📲 CONFIRMAR POR WHATSAPP</a>', unsafe_allow_html=True)
                     except Exception as e:
                         st.error(f"⚠️ Error al guardar datos: {e}")
                 else:
-                    # El error de conexión ya se mostró arriba
                     pass
 
 # ==========================================
@@ -260,4 +264,4 @@ elif menu == "🚕 CONDUCTOR (ACTIVAR PAGO)":
         """)
         
         msg_pago = f"Hola Admin, adjunto pago de $1 para activar el numero {conductor_id} en Taxi Seguro Coca."
-        st.markdown(f'<a href="https://wa.me/593962362257?text={msg_pago}" class="wa-btn" target="_blank">✅ ENVIAR COMPROBANTE</a>', unsafe_allow_html=True)
+        st.markdown(f'<a href="https://wa.me/593960643638?text={msg_pago}" class="wa-btn" target="_blank">✅ ENVIAR COMPROBANTE</a>', unsafe_allow_html=True)

@@ -80,9 +80,9 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lon = loc['coords']['longitude']
         coords_txt = f"{lat}, {lon}"
         
-        # >>>>> AQUI ESTÁ EL CAMBIO: ENLACE CLÁSICO <<<<<
-        # "https://www.google.com/maps?q=" es el estándar mundial.
-        # Funciona en PC, Android y iPhone sin fallos.
+        # >>>>> AQUÍ ESTÁ LA CORRECCIÓN <<<<<
+        # Eliminamos "googleusercontent". Usamos el enlace directo https de Google.
+        # Este formato "?q=" le dice al celular: "Busca esta coordenada".
         mapa_link = f"https://www.google.com/maps?q={lat},{lon}"
         
         ubicacion_detectada = True
@@ -123,6 +123,7 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
 
                         mensaje_wa = f"👋 Hola, soy *{nombre}*.\nNecesito un *{tipo_servicio}*.\n{texto_ubicacion}\n🏠 *Ref:* {referencia}"
                         
+                        # Codificación segura para URL
                         mensaje_codificado = urllib.parse.quote(mensaje_wa)
                         
                         # TU NÚMERO

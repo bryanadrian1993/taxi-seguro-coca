@@ -185,8 +185,8 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lon = loc['coords']['longitude']
         ubicacion_txt = f"{lat}, {lon}"
         
-        # --- ENLACE ARREGLADO: ESTA ES LA URL OFICIAL UNIVERSAL ---
-        # "https://www.google.com/maps?q=" es el estándar que nunca falla.
+        # --- ENLACE ARREGLADO: ESTE ES EL FORMATO ESTÁNDAR DE GOOGLE ---
+        # "https://www.google.com/maps?q=" abre directamente la aplicación de mapas
         mapa_link = f"https://www.google.com/maps?q={lat},{lon}"
         
         st.markdown(f'<div class="caja-exito">✅ Ubicación detectada en El Coca</div>', unsafe_allow_html=True)

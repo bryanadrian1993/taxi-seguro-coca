@@ -3,42 +3,79 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from streamlit_js_eval import get_geolocation
 from datetime import datetime
-import time
 
 # ---------------------------------------------------------
-# CONFIGURACIÓN DE PÁGINA Y MARCA
+# 1. CONFIGURACIÓN DE PÁGINA
 # ---------------------------------------------------------
 st.set_page_config(page_title="TAXI SEGURO - COCA", page_icon="🚕", layout="centered")
 
-# Estilos CSS Profesionales (Amarillo/Negro/Rojo)
+# ---------------------------------------------------------
+# 2. ESTILOS CSS BLINDADOS (FUERZA EL MODO CLARO)
+# ---------------------------------------------------------
 st.markdown("""
     <style>
-    .stApp { background-color: #ffffff; }
+    /* VARIABLES GLOBALES */
+    :root {
+        --primary-color: #FFD700;
+        --background-color: #ffffff;
+        --secondary-background-color: #f0f2f6;
+        --text-color: #000000;
+        --font: sans-serif;
+    }
     
-    /* Encabezados */
-    h1 { color: #D32F2F; font-family: 'Arial Black', sans-serif; text-align: center; text-transform: uppercase; margin-bottom: 0px;}
-    h3 { color: #333; text-align: center; font-size: 16px; margin-top: 5px; font-weight: bold;}
+    /* FORZAR FONDO BLANCO Y TEXTO NEGRO EN TODA LA APP */
+    .stApp {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
     
+    /* Títulos */
+    h1 { 
+        color: #D32F2F !important; 
+        font-family: 'Arial Black', sans-serif; 
+        text-align: center; 
+        text-transform: uppercase; 
+        margin-bottom: 0px;
+    }
+    h3 { 
+        color: #333333 !important; 
+        text-align: center; 
+        font-size: 16px; 
+        margin-top: 5px; 
+        font-weight: bold;
+    }
+    p, label, div, span {
+        color: #000000 !important;
+    }
+    
+    /* Campos de Entrada (Inputs) - Fondo blanco obligado */
+    .stTextInput > div > div > input, 
+    .stSelectbox > div > div > div {
+        color: #000000 !important;
+        background-color: #ffffff !important;
+        border: 1px solid #cccccc;
+    }
+
     /* Botones Principales (Amarillo Taxi) */
     .stButton>button {
         width: 100%;
         border-radius: 12px;
         height: 3.8em;
         font-weight: bold;
-        background-color: #FFD700; 
-        color: black; 
+        background-color: #FFD700 !important; 
+        color: black !important; 
         border: 2px solid #000;
         font-size: 16px;
         box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     }
     .stButton>button:hover {
-        background-color: #FFEA00;
-        border-color: #D32F2F;
+        background-color: #FFEA00 !important;
+        border-color: #D32F2F !important;
     }
 
     /* Botón PayPhone (Naranja Vibrante) */
     .payphone-btn { 
-        background-color: #FF6D00; 
+        background-color: #FF6D00 !important; 
         color: white !important; 
         padding: 18px; 
         border-radius: 12px; 
@@ -53,7 +90,7 @@ st.markdown("""
                   
     /* Botón WhatsApp (Verde Oficial) */
     .wa-btn { 
-        background-color: #25D366; 
+        background-color: #25D366 !important; 
         color: white !important; 
         padding: 15px; 
         border-radius: 12px; 
@@ -65,22 +102,22 @@ st.markdown("""
         border: 1px solid #128C7E;
     }
 
-    /* Alertas y Cajas */
-    .caja-alerta {
-        background-color: #FFEBEE;
-        color: #B71C1C;
-        padding: 15px;
-        border-radius: 10px;
-        border-left: 5px solid #D32F2F;
-        text-align: center;
-        margin-bottom: 20px;
-    }
+    /* Cajas de Estado */
     .caja-exito {
-        background-color: #E8F5E9;
-        color: #1B5E20;
+        background-color: #E8F5E9 !important;
+        color: #1B5E20 !important;
         padding: 15px;
         border-radius: 10px;
         border-left: 5px solid #2E7D32;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .caja-alerta {
+        background-color: #FFEBEE !important;
+        color: #B71C1C !important;
+        padding: 15px;
+        border-radius: 10px;
+        border-left: 5px solid #D32F2F;
         text-align: center;
         margin-bottom: 20px;
     }
@@ -88,7 +125,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# CONEXIÓN A GOOGLE SHEETS
+# 3. CONEXIÓN A GOOGLE SHEETS
 # ---------------------------------------------------------
 def conectar_google_sheets():
     try:
@@ -106,10 +143,10 @@ def conectar_google_sheets():
         return None
 
 # ---------------------------------------------------------
-# INTERFAZ DE USUARIO
+# 4. INTERFAZ DE USUARIO (FRONTEND)
 # ---------------------------------------------------------
 
-# Logo / Título
+# Encabezado con Logo
 st.markdown("<h1>🚕 TAXI SEGURO - COCA</h1>", unsafe_allow_html=True)
 st.markdown("<h3>📍 Francisco de Orellana | Servicio 24/7</h3>", unsafe_allow_html=True)
 st.divider()
@@ -120,10 +157,10 @@ menu = st.selectbox("SELECCIONA UNA OPCIÓN:", ["👤 PASAJERO (PEDIR UNIDAD)", 
 st.markdown("<br>", unsafe_allow_html=True)
 
 # ==========================================
-# MÓDULO 1: PASAJERO
+# MÓDULO A: PASAJERO
 # ==========================================
 if menu == "👤 PASAJERO (PEDIR UNIDAD)":
-    st.info("👇 Presiona para enviar tu ubicación exacta al conductor")
+    st.info("👇 Presiona abajo para permitir el acceso al GPS")
     
     # 1. Geolocalización
     loc = get_geolocation()
@@ -135,10 +172,11 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lat = loc['coords']['latitude']
         lon = loc['coords']['longitude']
         ubicacion_txt = f"{lat}, {lon}"
+        # Generamos link directo a Google Maps
         mapa_link = f"http://googleusercontent.com/maps.google.com/maps?q={lat},{lon}"
         st.markdown(f'<div class="caja-exito">✅ Ubicación detectada en El Coca</div>', unsafe_allow_html=True)
     
-    # 2. Formulario
+    # 2. Formulario de Pedido
     with st.form("formulario_pedido"):
         col1, col2 = st.columns(2)
         with col1:
@@ -153,30 +191,31 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
 
         if enviar:
             if not loc:
-                st.error("⚠️ PRIMERO debemos detectar tu ubicación (GPS).")
+                st.error("⚠️ PRIMERO debemos detectar tu ubicación (GPS). Asegúrate de dar permiso.")
             elif not nombre:
-                st.warning("⚠️ Escribe tu nombre.")
+                st.warning("⚠️ Escribe tu nombre para que el conductor sepa a quién buscar.")
             else:
                 # Guardar en Base de Datos
                 hoja = conectar_google_sheets()
                 if hoja:
                     try:
                         fecha = datetime.now().strftime("%Y-%m-%d %H:%M")
+                        # Columnas: Fecha, Nombre, Celular, Tipo, Ref, Coordenadas, LinkMapa, Estado
                         hoja.append_row([fecha, nombre, celular, tipo_servicio, referencia, ubicacion_txt, mapa_link, "PENDIENTE"])
-                        st.success("¡Solicitud registrada!")
+                        st.success("✅ ¡Solicitud registrada con éxito!")
                         
-                        # Generar Link de WhatsApp
+                        # Generar Link de WhatsApp para avisar al grupo/admin
                         mensaje_wa = f"👋 Hola, soy *{nombre}*.\nNecesito un *{tipo_servicio}* en El Coca.\n📍 *GPS:* {mapa_link}\n🏠 *Ref:* {referencia}"
                         link_wa = f"https://wa.me/593962362257?text={mensaje_wa}" # CAMBIA ESTE NÚMERO POR EL TUYO
                         
                         st.markdown(f'<a href="{link_wa}" class="wa-btn" target="_blank">📲 CONFIRMAR POR WHATSAPP</a>', unsafe_allow_html=True)
                     except:
-                        st.error("Error al conectar con la base de datos.")
+                        st.error("Error al conectar con la base de datos. Intenta de nuevo.")
                 else:
-                    st.error("Error de configuración (Secrets).")
+                    st.error("Error de configuración interna (Secrets). Contacta al soporte.")
 
 # ==========================================
-# MÓDULO 2: CONDUCTOR
+# MÓDULO B: CONDUCTOR
 # ==========================================
 elif menu == "🚕 CONDUCTOR (ACTIVAR PAGO)":
     st.markdown("### 🚦 Control de Suscripción Diaria")
@@ -185,7 +224,7 @@ elif menu == "🚕 CONDUCTOR (ACTIVAR PAGO)":
     conductor_id = st.text_input("Celular (+593):", placeholder="099...")
     
     # AQUÍ IRÍA LA LÓGICA DE VERIFICACIÓN AUTOMÁTICA
-    # Por ahora simulamos que NO ha pagado para mostrar el botón
+    # Por ahora, si escribe algo, asumimos que NO ha pagado para mostrarle las opciones
     
     if conductor_id:
         st.markdown("""
@@ -203,7 +242,12 @@ elif menu == "🚕 CONDUCTOR (ACTIVAR PAGO)":
         st.markdown(f'<a href="{link_pago_payphone}" class="payphone-btn" target="_blank">💳 PAGAR $1.00 CON PAYPHONE</a>', unsafe_allow_html=True)
 
         st.write("👇 **OPCIÓN 2: MANUAL (Deuna / Banco)**")
-        st.info("**Banco Pichincha** | Cta: 220XXXXXX | CI: 17XXXXXXX")
+        st.info("""
+        🏦 **Banco Pichincha / Deuna**
+        \nCuenta Ahorros: **220XXXXXXX**
+        \nCI: **17XXXXXXX**
+        \nNombre: **Tu Nombre**
+        """)
         
-        msg_pago = f"Adjunto pago de $1 para activar el numero {conductor_id}"
-        st.markdown(f'<a href="https://wa.me/593962362257?text={msg_pago}" class="wa-btn" target="_blank">ENVIAR COMPROBANTE</a>', unsafe_allow_html=True)
+        msg_pago = f"Hola Admin, adjunto pago de $1 para activar el numero {conductor_id} en Taxi Seguro Coca."
+        st.markdown(f'<a href="https://wa.me/593962362257?text={msg_pago}" class="wa-btn" target="_blank">✅ ENVIAR COMPROBANTE</a>', unsafe_allow_html=True)

@@ -80,10 +80,10 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lon = loc['coords']['longitude']
         coords_txt = f"{lat}, {lon}"
         
-        # >>>>> ENLACE FINAL CORREGIDO <<<<<
-        # Usamos https://www.google.com/maps/search/?api=1...
-        # Este formato es compatible con TODOS los celulares y navegadores.
-        mapa_link = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
+        # >>>>> CORRECCIÓN FINAL <<<<<
+        # Usamos el dominio oficial 'www.google.com'.
+        # Esto funciona en TODOS los celulares porque es la página web real.
+        mapa_link = f"https://www.google.com/maps?q={lat},{lon}"
         
         ubicacion_detectada = True
         st.markdown(f'<div class="caja-exito">✅ GPS Detectado automáticamente</div>', unsafe_allow_html=True)

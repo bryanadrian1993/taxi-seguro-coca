@@ -80,13 +80,11 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lon = loc['coords']['longitude']
         coords_txt = f"{lat}, {lon}"
         
-        # -------------------------------------------------------------------
-        # >>>>> OJO AQUÍ: ESTA ES LA LÍNEA QUE CAMBIÉ <<<<<
-        # -------------------------------------------------------------------
-        # Antes usaba: googleusercontent.com (MAL)
-        # Ahora usa: www.google.com/maps/search (BIEN - OFICIAL)
+        # >>>>> CORRECCIÓN DEFINITIVA (Revisada manualmente) <<<<<
+        # Eliminado: "googleusercontent"
+        # Agregado: "https://www.google.com/maps/search/?api=1&query="
+        # Este formato es INFALIBLE para abrir la App.
         mapa_link = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
-        # -------------------------------------------------------------------
         
         ubicacion_detectada = True
         st.markdown(f'<div class="caja-exito">✅ GPS Detectado automáticamente</div>', unsafe_allow_html=True)

@@ -133,20 +133,24 @@ def conectar_google_sheets():
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         
         if "gcp_service_account" in st.secrets:
+            # Creamos una copia del diccionario para no romper nada
             creds_dict = dict(st.secrets["gcp_service_account"])
             
-            # Corrección de la llave privada
+            # --- CORRECCIÓN AUTOMÁTICA DEL ERROR JWT ---
             if "private_key" in creds_dict:
                 creds_dict["private_key"] = creds_dict["private_key"].replace("\\n", "\n")
             
             creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
             client = gspread.authorize(creds)
+            
+            # Conecta a la hoja "Base_Datos_Coca" y toma la PRIMERA pestaña (índice 0)
             return client.open("Base_Datos_Coca").get_worksheet(0) 
         else:
             st.error("⚠️ Faltan los Secrets en Streamlit.")
             return None
             
     except Exception as e:
+        # Muestra el error real si sigue fallando
         st.error(f"⚠️ ERROR DE CONEXIÓN: {e}") 
         return None
 
@@ -181,7 +185,8 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lon = loc['coords']['longitude']
         ubicacion_txt = f"{lat}, {lon}"
         
-        # --- ENLACE ARREGLADO: ESTA ES LA URL OFICIAL DE GOOGLE MAPS ---
+        # --- ENLACE DE MAPA CORREGIDO ---
+        # Usamos el dominio oficial limpio, sin números raros ni redirects.
         mapa_link = f"https://www.google.com/maps?q={lat},{lon}"
         
         st.markdown(f'<div class="caja-exito">✅ Ubicación detectada en El Coca</div>', unsafe_allow_html=True)
@@ -210,13 +215,14 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
                 if hoja:
                     try:
                         fecha = datetime.now().strftime("%Y-%m-%d %H:%M")
+                        # Columnas: Fecha, Nombre, Celular, Tipo, Ref, Coordenadas, LinkMapa, Estado
                         hoja.append_row([fecha, nombre, celular, tipo_servicio, referencia, ubicacion_txt, mapa_link, "PENDIENTE"])
                         st.success("✅ ¡Solicitud registrada con éxito!")
                         
                         # --- GENERACIÓN DE LINK DE WHATSAPP ---
                         mensaje_wa = f"👋 Hola, soy *{nombre}*.\nNecesito un *{tipo_servicio}* en El Coca.\n📍 *GPS:* {mapa_link}\n🏠 *Ref:* {referencia}"
                         
-                        # Codificamos el mensaje
+                        # Codificamos el mensaje para que funcione bien en internet
                         mensaje_codificado = urllib.parse.quote(mensaje_wa)
                         
                         # >>> TU NÚMERO (593962384356) <<<
@@ -245,21 +251,3 @@ elif menu == "🚕 CONDUCTOR (ACTIVAR PAGO)":
             <br>Cancela <b>$1.00 USD</b> para recibir carreras hoy.
         </div>
         """, unsafe_allow_html=True)
-        
-        link_pago_payphone = "https://pay.payphonetodoesposible.com/" 
-        
-        st.write("👇 **OPCIÓN 1: ACTIVACIÓN AUTOMÁTICA (Recomendado)**")
-        st.markdown(f'<a href="{link_pago_payphone}" class="payphone-btn" target="_blank">💳 PAGAR $1.00 CON PAYPHONE</a>', unsafe_allow_html=True)
-
-        st.write("👇 **OPCIÓN 2: MANUAL (Deuna / Banco)**")
-        st.info("""
-        🏦 **Banco Pichincha / Deuna**
-        \nCuenta Ahorros: **220XXXXXXX**
-        \nCI: **17XXXXXXX**
-        \nNombre: **Tu Nombre**
-        """)
-        
-        msg_pago = f"Hola Admin, adjunto pago de $1 para activar el numero {conductor_id} en Taxi Seguro Coca."
-        
-        # >>> TU NÚMERO AQUÍ TAMBIÉN <<<
-        st.markdown(f'<a href="https://wa.me/593962384356?text={msg_pago}" class="wa-btn" target="_blank">✅ ENVIAR COMPROBANTE</a>', unsafe_allow_html=True)

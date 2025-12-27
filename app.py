@@ -125,27 +125,32 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# 3. CONEXIÓN A GOOGLE SHEETS (CORREGIDA Y BLINDADA)
+# 3. CONEXIÓN A GOOGLE SHEETS (CON AUTOREPARACIÓN DE LLAVE)
 # ---------------------------------------------------------
 def conectar_google_sheets():
     try:
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         
         if "gcp_service_account" in st.secrets:
-            creds_dict = st.secrets["gcp_service_account"]
+            # Creamos una copia del diccionario para no romper nada
+            creds_dict = dict(st.secrets["gcp_service_account"])
+            
+            # --- CORRECCIÓN AUTOMÁTICA DEL ERROR JWT ---
+            # Esto convierte los saltos de linea mal copiados (\\n) en reales (\n)
+            if "private_key" in creds_dict:
+                creds_dict["private_key"] = creds_dict["private_key"].replace("\\n", "\n")
+            
             creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
             client = gspread.authorize(creds)
             
-            # --- CORRECCIÓN VITAL ---
-            # Usamos .get_worksheet(0) para tomar la primera pestaña SIEMPRE
-            # (Funciona aunque se llame "Hoja 1", "Sheet1" o "Datos")
+            # Conecta a la hoja "Base_Datos_Coca" y toma la PRIMERA pestaña (índice 0)
             return client.open("Base_Datos_Coca").get_worksheet(0) 
         else:
             st.error("⚠️ Faltan los Secrets en Streamlit.")
             return None
             
     except Exception as e:
-        # Esto imprimirá el error REAL en pantalla para que sepamos qué pasa
+        # Muestra el error real si sigue fallando
         st.error(f"⚠️ ERROR DE CONEXIÓN: {e}") 
         return None
 
@@ -202,7 +207,7 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
             elif not nombre:
                 st.warning("⚠️ Escribe tu nombre para que el conductor sepa a quién buscar.")
             else:
-                # Intentamos guardar en Base de Datos
+                # Guardar en Base de Datos
                 hoja = conectar_google_sheets()
                 if hoja:
                     try:
@@ -217,9 +222,9 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
                         
                         st.markdown(f'<a href="{link_wa}" class="wa-btn" target="_blank">📲 CONFIRMAR POR WHATSAPP</a>', unsafe_allow_html=True)
                     except Exception as e:
-                        st.error(f"⚠️ Error al escribir en la hoja: {e}")
+                        st.error(f"⚠️ Error al guardar datos: {e}")
                 else:
-                    # El error de conexión ya se mostró arriba, no hacemos nada más
+                    # El error de conexión ya se mostró arriba
                     pass
 
 # ==========================================

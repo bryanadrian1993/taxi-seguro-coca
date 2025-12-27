@@ -184,8 +184,10 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lat = loc['coords']['latitude']
         lon = loc['coords']['longitude']
         ubicacion_txt = f"{lat}, {lon}"
-        # Generamos link directo a Google Maps
-        mapa_link = f"http://googleusercontent.com/maps.google.com/maps?q={lat},{lon}"
+        
+        # --- CORRECCIÓN AQUÍ: ENLACE OFICIAL DE GOOGLE MAPS ---
+        mapa_link = f"https://www.google.com/maps?q={lat},{lon}"
+        
         st.markdown(f'<div class="caja-exito">✅ Ubicación detectada en El Coca</div>', unsafe_allow_html=True)
     
     # 2. Formulario de Pedido
@@ -216,7 +218,7 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
                         hoja.append_row([fecha, nombre, celular, tipo_servicio, referencia, ubicacion_txt, mapa_link, "PENDIENTE"])
                         st.success("✅ ¡Solicitud registrada con éxito!")
                         
-                        # --- GENERACIÓN DE LINK DE WHATSAPP MEJORADA ---
+                        # --- GENERACIÓN DE LINK DE WHATSAPP ---
                         mensaje_wa = f"👋 Hola, soy *{nombre}*.\nNecesito un *{tipo_servicio}* en El Coca.\n📍 *GPS:* {mapa_link}\n🏠 *Ref:* {referencia}"
                         
                         # Codificamos el mensaje para que funcione bien en internet

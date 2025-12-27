@@ -80,10 +80,11 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lon = loc['coords']['longitude']
         coords_txt = f"{lat}, {lon}"
         
-        # >>>>> CORRECCIÓN DEFINITIVA (Revisada manualmente) <<<<<
-        # Eliminado: "googleusercontent"
-        # Agregado: "https://www.google.com/maps/search/?api=1&query="
-        # Este formato es INFALIBLE para abrir la App.
+        # -----------------------------------------------------------
+        # CORRECCIÓN DE MAPA: ENLACE OFICIAL GOOGLE MAPS
+        # Usamos https://www.google.com/maps/search/?api=1&query=
+        # Este es el formato INFALIBLE para abrir la App.
+        # -----------------------------------------------------------
         mapa_link = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
         
         ubicacion_detectada = True
@@ -110,29 +111,43 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
                 st.error("⚠️ Como no tenemos tu GPS, debes escribir una referencia de dónde estás.")
             else:
                 hoja = conectar_google_sheets()
+                
+                # Preparamos los textos
+                if ubicacion_detectada:
+                    texto_ubicacion = f"📍 *GPS:* {mapa_link}"
+                else:
+                    texto_ubicacion = "📍 *Ubicación:* (Cliente envía ubicación manual)"
+
+                # Armamos el mensaje para WhatsApp
+                # Nota: Este mensaje lo envía el cliente desde SU teléfono
+                mensaje_wa = f"👋 Hola, soy *{nombre}*.\nNecesito un *{tipo_servicio}*.\n{texto_ubicacion}\n🏠 *Ref:* {referencia}"
+                
+                # Codificación para que aparezca en el chat
+                mensaje_codificado = urllib.parse.quote(mensaje_wa)
+                
+                # -----------------------------------------------------------
+                # DESTINATARIO: TU NÚMERO (PROPIETARIO)
+                # El enlace wa.me hará que el cliente TE escriba a TI.
+                # -----------------------------------------------------------
+                link_wa = f"https://wa.me/593962384356?text={mensaje_codificado}" 
+                
+                # Guardamos en Sheets
                 if hoja:
                     try:
                         fecha = datetime.now().strftime("%Y-%m-%d %H:%M")
+                        # -------------------------------------------------------
+                        # AQUÍ SE GUARDA EL NÚMERO DEL CLIENTE EN LA BASE DE DATOS
+                        # La variable 'celular' se añade en la 3ra posición.
+                        # -------------------------------------------------------
                         hoja.append_row([fecha, nombre, celular, tipo_servicio, referencia, coords_txt, mapa_link, "PENDIENTE"])
                         st.success("✅ ¡Solicitud lista!")
                         
-                        # Armar mensaje 
-                        if ubicacion_detectada:
-                            texto_ubicacion = f"📍 *GPS:* {mapa_link}"
-                        else:
-                            texto_ubicacion = "📍 *Ubicación:* (Cliente envía ubicación manual)"
-
-                        mensaje_wa = f"👋 Hola, soy *{nombre}*.\nNecesito un *{tipo_servicio}*.\n{texto_ubicacion}\n🏠 *Ref:* {referencia}"
-                        
-                        # Codificación segura para URL
-                        mensaje_codificado = urllib.parse.quote(mensaje_wa)
-                        
-                        # TU NÚMERO
-                        link_wa = f"https://wa.me/593962384356?text={mensaje_codificado}" 
-                        
+                        # Botón para enviar
                         st.markdown(f'<a href="{link_wa}" class="wa-btn" target="_blank">📲 ENVIAR PEDIDO POR WHATSAPP</a>', unsafe_allow_html=True)
                     except Exception as e:
-                        st.error(f"⚠️ Error: {e}")
+                        st.error(f"⚠️ Error al guardar: {e}")
+                        # Aunque falle Sheets, mostramos el botón de WhatsApp
+                        st.markdown(f'<a href="{link_wa}" class="wa-btn" target="_blank">📲 ENVIAR PEDIDO POR WHATSAPP</a>', unsafe_allow_html=True)
 
 # ==========================================
 # MÓDULO B: CONDUCTOR

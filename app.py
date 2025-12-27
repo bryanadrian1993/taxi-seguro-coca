@@ -80,8 +80,10 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lon = loc['coords']['longitude']
         coords_txt = f"{lat}, {lon}"
         
-        # >>>>> CORRECCIÓN DEFINITIVA: ENLACE PURO <<<<<
-        # Eliminamos cualquier prefijo raro. Usamos la API oficial pura.
+        # >>>>> CORRECCIÓN DEFINITIVA <<<<<
+        # Eliminamos "googleusercontent" que estaba causando el error.
+        # Usamos HTTPS oficial con el comando "search" y "api=1".
+        # Esto fuerza al Android a buscar una App compatible.
         mapa_link = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
         
         ubicacion_detectada = True

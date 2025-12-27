@@ -80,7 +80,8 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lon = loc['coords']['longitude']
         coords_txt = f"{lat}, {lon}"
         
-        # >>>>> ESTE ES EL ENLACE UNIVERSAL QUE FUNCIONA EN PC Y MÓVIL <<<<<
+        # >>>>> ESTE ES EL ENLACE CORRECTO QUE FUNCIONA EN CELULARES <<<<<
+        # Usamos "https://www.google.com/maps/search/?api=1&query="
         mapa_link = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
         
         ubicacion_detectada = True

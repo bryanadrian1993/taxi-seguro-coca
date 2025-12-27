@@ -185,7 +185,8 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         lon = loc['coords']['longitude']
         ubicacion_txt = f"{lat}, {lon}"
         
-        # --- ENLACE OFICIAL DE GOOGLE MAPS (SIN ERRORES) ---
+        # --- ENLACE OFICIAL DE GOOGLE MAPS (ESTÁNDAR) ---
+        # Este formato es el universal: https://www.google.com/maps?q=lat,lon
         mapa_link = f"https://www.google.com/maps?q={lat},{lon}"
         
         st.markdown(f'<div class="caja-exito">✅ Ubicación detectada en El Coca</div>', unsafe_allow_html=True)
@@ -224,7 +225,7 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
                         # Codificamos el mensaje para que funcione bien en internet
                         mensaje_codificado = urllib.parse.quote(mensaje_wa)
                         
-                        # >>> NÚMERO ACTUALIZADO (593962384356) <<<
+                        # >>> NÚMERO DEFINITIVO (Tu número) <<<
                         link_wa = f"https://wa.me/593962384356?text={mensaje_codificado}" 
                         
                         st.markdown(f'<a href="{link_wa}" class="wa-btn" target="_blank">📲 CONFIRMAR POR WHATSAPP</a>', unsafe_allow_html=True)
@@ -267,5 +268,5 @@ elif menu == "🚕 CONDUCTOR (ACTIVAR PAGO)":
         
         msg_pago = f"Hola Admin, adjunto pago de $1 para activar el numero {conductor_id} en Taxi Seguro Coca."
         
-        # >>> NÚMERO ACTUALIZADO AQUÍ TAMBIÉN <<<
+        # >>> NÚMERO DEFINITIVO AQUÍ TAMBIÉN <<<
         st.markdown(f'<a href="https://wa.me/593962384356?text={msg_pago}" class="wa-btn" target="_blank">✅ ENVIAR COMPROBANTE</a>', unsafe_allow_html=True)

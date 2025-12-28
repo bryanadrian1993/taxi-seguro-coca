@@ -41,7 +41,7 @@ def conectar_sheets():
 
 # 4. INTERFAZ PRINCIPAL
 st.markdown("<h1 style='text-align:center;'>🚕 TAXI SEGURO</h1>", unsafe_allow_html=True)
-st.markdown("<h3 style='text-align:center;'>📍 Francisco de Orellana</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align:center;'>📍 COCA</h3>", unsafe_allow_html=True)
 
 # SECCIÓN DE DETECCIÓN DE GPS
 st.write("---")

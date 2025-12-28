@@ -81,9 +81,9 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         coords_txt = f"{lat}, {lon}"
         
         # -----------------------------------------------------------
-        # CORRECCIÓN DE MAPA: ENLACE OFICIAL GOOGLE MAPS
-        # Usamos https://www.google.com/maps/search/?api=1&query=
-        # Este es el formato INFALIBLE para abrir la App.
+        # CORRECCIÓN DE MAPA: Enlace OFICIAL de Google
+        # Usamos https://www.google.com/maps/search/?api=1...
+        # Este es el único formato que garantiza abrir la App.
         # -----------------------------------------------------------
         mapa_link = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
         
@@ -97,7 +97,8 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
         with col1:
             nombre = st.text_input("Tu Nombre:")
         with col2:
-            celular = st.text_input("Tu WhatsApp:")
+            # Este es el celular DEL CLIENTE (se guardará en la base de datos)
+            celular_cliente = st.text_input("Tu WhatsApp:")
             
         referencia = st.text_input("📍 ¿Dónde te recogemos? (Barrio / Calles / Referencia):", placeholder="Ej: Barrio Central, frente al Tía")
         tipo_servicio = st.radio("¿Qué necesitas?", ["Taxi Ejecutivo 🚕", "Camioneta 🛻", "Moto Envío 📦"], horizontal=True)
@@ -119,27 +120,24 @@ if menu == "👤 PASAJERO (PEDIR UNIDAD)":
                     texto_ubicacion = "📍 *Ubicación:* (Cliente envía ubicación manual)"
 
                 # Armamos el mensaje para WhatsApp
-                # Nota: Este mensaje lo envía el cliente desde SU teléfono
                 mensaje_wa = f"👋 Hola, soy *{nombre}*.\nNecesito un *{tipo_servicio}*.\n{texto_ubicacion}\n🏠 *Ref:* {referencia}"
                 
                 # Codificación para que aparezca en el chat
                 mensaje_codificado = urllib.parse.quote(mensaje_wa)
                 
                 # -----------------------------------------------------------
-                # DESTINATARIO: TU NÚMERO (PROPIETARIO)
-                # El enlace wa.me hará que el cliente TE escriba a TI.
+                # CORRECCIÓN CRÍTICA: TU NÚMERO (PROPIETARIO)
+                # Aquí ponemos FIJO tu número para que el mensaje te llegue a TI.
                 # -----------------------------------------------------------
-                link_wa = f"https://wa.me/593962384356?text={mensaje_codificado}" 
+                mi_numero_propietario = "593962384356"
+                link_wa = f"https://wa.me/{mi_numero_propietario}?text={mensaje_codificado}" 
                 
                 # Guardamos en Sheets
                 if hoja:
                     try:
                         fecha = datetime.now().strftime("%Y-%m-%d %H:%M")
-                        # -------------------------------------------------------
-                        # AQUÍ SE GUARDA EL NÚMERO DEL CLIENTE EN LA BASE DE DATOS
-                        # La variable 'celular' se añade en la 3ra posición.
-                        # -------------------------------------------------------
-                        hoja.append_row([fecha, nombre, celular, tipo_servicio, referencia, coords_txt, mapa_link, "PENDIENTE"])
+                        # AQUÍ guardamos 'celular_cliente' en la base de datos para tu registro
+                        hoja.append_row([fecha, nombre, celular_cliente, tipo_servicio, referencia, coords_txt, mapa_link, "PENDIENTE"])
                         st.success("✅ ¡Solicitud lista!")
                         
                         # Botón para enviar
@@ -166,4 +164,5 @@ elif menu == "🚕 CONDUCTOR (ACTIVAR PAGO)":
         st.write("🏦 **Pichincha / Deuna**: 220XXXXXXX")
         
         msg_pago = f"Hola Admin, adjunto pago de $1 para activar el numero {conductor_id}."
+        # Aquí también te llega a TI
         st.markdown(f'<a href="https://wa.me/593962384356?text={msg_pago}" class="wa-btn" target="_blank">✅ ENVIAR COMPROBANTE</a>', unsafe_allow_html=True)

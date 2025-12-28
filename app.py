@@ -72,7 +72,7 @@ with st.form("pedido_taxi"):
     st.write("🛰️ **PASO 2: DATOS DEL VIAJE**")
     nombre = st.text_input("Nombre del cliente:")
     celular = st.text_input("Número de WhatsApp:")
-    referencia = st.text_input("Referencia exacta (Ej: Casa verde frente al parque):")
+    referencia = st.text_input("Dirección/Referencia exacta (Ej: Casa verde frente al parque):")
     tipo = st.selectbox("Tipo de unidad:", ["Taxi 🚕", "Camioneta 🛻", "Moto 📦"])
     
     boton_registro = st.form_submit_button("REGISTRAR PEDIDO")

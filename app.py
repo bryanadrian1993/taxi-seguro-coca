@@ -11,17 +11,29 @@ import urllib.parse
 st.set_page_config(page_title="TAXI SEGURO - COCA", page_icon="🚕", layout="centered")
 
 # ---------------------------------------------------------
-# 2. ESTILOS CSS
+# 2. ESTILOS CSS PERSONALIZADOS
 # ---------------------------------------------------------
 st.markdown("""
     <style>
-    :root { --primary-color: #FFD700; --background-color: #ffffff; --text-color: #000000; }
-    .stApp { background-color: #ffffff !important; color: #000000 !important; }
-    h1 { color: #D32F2F !important; font-family: 'Arial Black', sans-serif; text-align: center; text-transform: uppercase; margin-bottom: 0px; }
-    h3 { color: #333333 !important; text-align: center; font-size: 16px; margin-top: 5px; font-weight: bold; }
+    :root { --primary-color: #FFD700; }
+    .stApp { background-color: #ffffff; color: #000000; }
+    h1 { color: #D32F2F !important; text-align: center; font-family: 'Arial Black'; margin-bottom: 0px; }
+    h3 { color: #333333 !important; text-align: center; font-size: 16px; margin-top: 5px; }
+    
+    /* Caja de instrucciones GPS */
+    .instrucciones-gps {
+        background-color: #FFF9C4;
+        padding: 15px;
+        border-radius: 10px;
+        border: 2px dashed #FBC02D;
+        text-align: center;
+        margin-bottom: 20px;
+        color: #000;
+    }
+    
+    /* Botones */
     .stButton>button { width: 100%; border-radius: 12px; height: 3.5em; font-weight: bold; background-color: #FFD700 !important; color: black !important; border: 2px solid #000; }
-    .wa-btn { background-color: #25D366 !important; color: white !important; padding: 15px; border-radius: 12px; text-align: center; display: block; text-decoration: none; font-weight: bold; border: 1px solid #128C7E; margin-top: 10px; }
-    .caja-gps { background-color: #F0F2F6; padding: 15px; border-radius: 10px; text-align: center; border: 1px dashed #ccc; margin-bottom: 15px; }
+    .wa-btn { background-color: #25D366 !important; color: white !important; padding: 18px; border-radius: 12px; text-align: center; display: block; text-decoration: none; font-weight: bold; font-size: 18px; border: 1px solid #128C7E; margin-top: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
     </style>
     """, unsafe_allow_html=True)
 
@@ -43,70 +55,84 @@ def conectar_google_sheets():
         return None
 
 # ---------------------------------------------------------
-# 4. INTERFAZ DE USUARIO
+# 4. LÓGICA DE INTERFAZ
 # ---------------------------------------------------------
 st.markdown("<h1>🚕 TAXI SEGURO - COCA</h1>", unsafe_allow_html=True)
-st.markdown("<h3>📍 Servicio 24/7 | El Coca</h3>", unsafe_allow_html=True)
+st.markdown("<h3>📍 Servicio 24/7 | Francisco de Orellana</h3>", unsafe_allow_html=True)
 st.divider()
 
-menu = st.selectbox("MENÚ:", ["👤 PASAJERO", "🚕 CONDUCTOR"])
+menu = st.selectbox("MENÚ PRINCIPAL:", ["👤 SOLICITAR TAXI", "🚕 CONDUCTORES"])
 
-if menu == "👤 PASAJERO":
-    st.markdown('<div class="caja-gps">', unsafe_allow_html=True)
-    st.write("🛰️ **Paso 1: Activa tu GPS**")
-    # Botón específico para disparar el permiso de ubicación
+if menu == "👤 SOLICITAR TAXI":
+    
+    # --- INSTRUCCIÓN VISUAL PARA EL GPS ---
+    st.markdown("""
+        <div class="instrucciones-gps">
+            <b>📢 IMPORTANTE:</b><br>
+            Para enviarte la unidad rápido, por favor dale a <b>"PERMITIR"</b> 
+            cuando tu celular te pida acceso a la ubicación (GPS). 🛰️
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Intentar obtener ubicación automáticamente
     loc = get_geolocation()
-    st.markdown('</div>', unsafe_allow_html=True)
 
     with st.form("form_pedido"):
-        nombre = st.text_input("Tu Nombre:")
-        celular_cliente = st.text_input("Tu WhatsApp (Para registro):")
-        referencia = st.text_input("📍 Referencia (Ej: Junto al Parque):")
-        tipo_servicio = st.selectbox("Vehículo:", ["Taxi Ejecutivo 🚕", "Camioneta 🛻", "Moto Envío 📦"])
+        nombre = st.text_input("👤 Tu Nombre:")
+        celular_cliente = st.text_input("📱 Tu WhatsApp:")
+        referencia = st.text_input("📍 Referencia (Casa, Local, Calles):")
+        tipo_servicio = st.radio("¿Qué vehículo necesitas?", ["Taxi Ejecutivo 🚕", "Camioneta 🛻", "Moto Envío 📦"], horizontal=True)
         
-        enviar = st.form_submit_button("REGISTRAR PEDIDO")
+        enviar = st.form_submit_button("✅ REGISTRAR MI PEDIDO")
 
     if enviar:
         if not nombre or not celular_cliente:
-            st.error("⚠️ Nombre y WhatsApp son obligatorios")
+            st.error("⚠️ Por favor completa tu nombre y WhatsApp.")
         else:
-            # Procesar Ubicación
+            # Procesar Coordenadas
             if loc and 'coords' in loc:
                 lat = loc['coords']['latitude']
                 lon = loc['coords']['longitude']
-                # ENLACE OFICIAL DE GOOGLE MAPS
-                mapa_link = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
+                # ENLACE DE GOOGLE MAPS CORREGIDO (Formato Universal)
+                mapa_link = f"https://www.google.com/maps?q={lat},{lon}"
                 coords_txt = f"{lat}, {lon}"
-                st.success("📍 Ubicación GPS obtenida con éxito")
+                st.success("📍 ¡Ubicación GPS detectada correctamente!")
             else:
-                mapa_link = "SIN GPS (Ubicación Manual)"
+                mapa_link = "No proporcionado (GPS desactivado)"
                 coords_txt = "Manual"
-                st.warning("⚠️ No se detectó GPS. Se enviará solo la referencia.")
+                st.warning("⚠️ No pudimos detectar tu GPS. Se enviará solo la referencia manual.")
 
-            # Guardar en Google Sheets
+            # 1. Guardar en la Base de Datos (Google Sheets)
             hoja = conectar_google_sheets()
             if hoja:
-                fecha = datetime.now().strftime("%Y-%m-%d %H:%M")
-                hoja.append_row([fecha, nombre, celular_cliente, tipo_servicio, referencia, coords_txt, mapa_link, "PENDIENTE"])
+                try:
+                    fecha = datetime.now().strftime("%Y-%m-%d %H:%M")
+                    # Se guarda el celular del cliente para tu base de datos futura
+                    hoja.append_row([fecha, nombre, celular_cliente, tipo_servicio, referencia, coords_txt, mapa_link, "PENDIENTE"])
+                except:
+                    pass
 
-            # -----------------------------------------------------------
-            # CORRECCIÓN DE MENSAJE: CONSTRUCCIÓN DEL TEXTO PARA TI
-            # -----------------------------------------------------------
+            # 2. Crear Mensaje para TI (El Propietario)
+            # Usamos doble salto de línea para que sea fácil de leer en el chat
             mensaje_wa = (
-                f"👋 *NUEVO PEDIDO DE TAXI*\n\n"
-                f"👤 *Cliente:* {nombre}\n"
-                f"📱 *Celular:* {celular_cliente}\n"
+                f"👋 *NUEVO PEDIDO DE UNIDAD*\n\n"
+                f"👤 *Nombre:* {nombre}\n"
+                f"📱 *WhatsApp Cliente:* {celular_cliente}\n"
                 f"🚕 *Servicio:* {tipo_servicio}\n"
-                f"🏠 *Ref:* {referencia}\n\n"
-                f"📍 *MAPA:* {mapa_link}"
+                f"🏠 *Referencia:* {referencia}\n\n"
+                f"📍 *UBICACIÓN:* {mapa_link}"
             )
             
+            # Codificar el texto para la URL de WhatsApp
             mensaje_codificado = urllib.parse.quote(mensaje_wa)
-            # TU NÚMERO (Propietario)
-            link_final = f"https://wa.me/593962384356?text={mensaje_codificado}"
             
-            st.info("✅ Pedido registrado en el sistema.")
-            st.markdown(f'<a href="{link_final}" class="wa-btn" target="_blank">📲 ENVIAR A CENTRAL (WHATSAPP)</a>', unsafe_allow_html=True)
+            # TU NÚMERO FIJO
+            tu_numero = "593962384356"
+            link_final = f"https://wa.me/{tu_numero}?text={mensaje_codificado}"
+            
+            # 3. Mostrar botón final
+            st.info("✅ Datos registrados. Ahora presiona el botón de abajo para enviar el WhatsApp a la central.")
+            st.markdown(f'<a href="{link_final}" class="wa-btn" target="_blank">📲 ENVIAR PEDIDO POR WHATSAPP</a>', unsafe_allow_html=True)
 
-elif menu == "🚕 CONDUCTOR":
-    st.write("Sección de conductores...")
+elif menu == "🚕 CONDUCTORES":
+    st.info("Módulo de activación para conductores próximamente...")
